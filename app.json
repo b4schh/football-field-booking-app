@@ -4,7 +4,7 @@
     "slug": "football-field-booking-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "src/assets/images/icon.png",
+    "icon": "src/assets/images/icon.jpg",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "scheme": "footballfieldbookingapp",

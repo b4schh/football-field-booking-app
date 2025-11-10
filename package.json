@@ -1,7 +1,7 @@
 {
   "name": "football-field-booking-app",
   "version": "1.0.0",
-  "main": "index.tsx",
+  "main": "index.js",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
