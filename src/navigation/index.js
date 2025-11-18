@@ -1,12 +1,13 @@
+import "react-native-gesture-handler";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStaticNavigation, StaticParamList } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Platform } from 'react-native';
 
-import { Explore } from './screens/Explore';
 import { Home } from './screens/Home';
-import { NotFound } from './screens/NotFound';
-
+import { SearchScreen } from './screens/SearchScreen';
+import { LoginScreen } from './screens/LoginScreen';
+import { RegisterScreen } from "./screens/RegisterScreen";
 
 const HomeTabs = createBottomTabNavigator({
   screens: {
@@ -17,13 +18,7 @@ const HomeTabs = createBottomTabNavigator({
         // tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
       },
     },
-    Explore: {
-      screen: Explore,
-      options: {
-        headerShown: false,
-        // tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-      },
-    },
+    
   },
   screenOptions: {
     headerShown: false,
@@ -41,21 +36,38 @@ const HomeTabs = createBottomTabNavigator({
 
 const RootStack = createNativeStackNavigator({
   screens: {
+    // LoginScreen: {
+    //   screen: LoginScreen,
+    //   options: {
+    //     headerShown: false,
+    //   },
+    // },
+    // RegisterScreen: {
+    //   screen: RegisterScreen,
+    //   options: {
+    //     headerShown: false,
+    //   },
+    // },
     HomeTabs: {
       screen: HomeTabs,
       options: {
         headerShown: false,
       },
     },
-    NotFound: {
-      screen: NotFound,
+
+    SearchScreen: { 
+      screen: SearchScreen,
       options: {
-        title: '404',
+        headerShown: false,
       },
-      linking: {
-        path: '*',
+     },
+     
+    Home: { 
+      screen: Home,
+      options: {
+        headerShown: false,
       },
-    },
+     },
   },
 });
 
