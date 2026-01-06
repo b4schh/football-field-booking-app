@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { View, ScrollView, StyleSheet, ActivityIndicator, Text } from "react-native";
+import { View, ScrollView, ActivityIndicator, Text , StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 import Header from "../../components/Header";
@@ -23,7 +23,7 @@ export function Home() {
   // Dữ liệu hiển thị: ưu tiên searchResults nếu có
   const dataToShow = searchResults.length > 0 ? searchResults : complexes;
 
-  // Debug log
+  // Debug log search results
   useEffect(() => {
     if (searchResults.length > 0) {
       console.log("🔍 Displaying search results:", searchResults.length);
@@ -63,7 +63,10 @@ export function Home() {
       <ScrollView contentContainerStyle={styles.listContainer}>
         {!loading &&
           dataToShow.map((complex) => (
-            <View key={complex.id} style={styles.complexCardWrapper}>
+            <View
+              key={complex.id ? complex.id.toString() : Math.random().toString()}
+              style={styles.complexCardWrapper}
+            >
               <ComplexCard
                 field={complex}
                 onPress={() =>
@@ -77,11 +80,27 @@ export function Home() {
   );
 }
 
+
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#f2f2f2" },
-  searchContainer: { marginHorizontal: 16 },
-  searchPlaceholder: { height: 25 },
-  listContainer: { paddingBottom: 20 },
-  complexCardWrapper: { marginTop: 16 },
-  noResultText: { textAlign: "center", marginTop: 40, color: "#999" },
+  container: {
+    flex: 1,
+    backgroundColor: "#f2f2f2",
+  },
+  searchContainer: {
+    marginHorizontal: 16,
+  },
+  searchPlaceholder: {
+    height: 25,
+  },
+  listContainer: {
+    paddingBottom: 20,
+  },
+  complexCardWrapper: {
+    marginTop: 16,
+  },
+  noResultText: {
+    textAlign: "center",
+    marginTop: 40,
+    color: "#999",
+  },
 });

@@ -64,7 +64,7 @@ export function BookingScreen() {
 
     // Navigate sang PaymentScreen với bookingDate là ISO string
     navigation.navigate("PaymentScreen", {
-      complexId,
+      complexId : complexId,
       complexName: complexData?.name || "",
       selectedSlot: {
         ...slot,

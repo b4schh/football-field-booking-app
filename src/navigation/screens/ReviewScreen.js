@@ -23,7 +23,7 @@ export function ReviewScreen() {
 
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
-  const [images, setImages] = useState([]); // URI sau khi convert
+  const [images, setImages] = useState([]); // Luôn là mảng
   const [loading, setLoading] = useState(false);
 
   // ===== PICK IMAGES =====
@@ -34,34 +34,39 @@ export function ReviewScreen() {
       return;
     }
 
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaType.Images, // ✅ API mới
-      allowsMultipleSelection: true,
-      quality: 1, // giữ nguyên, sẽ nén ở bước convert
-    });
-
-    if (result.canceled) return;
-
     try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaType.Images,
+        allowsMultipleSelection: true,
+        quality: 1,
+      });
+
+      if (result.canceled || !result.assets?.length) return;
+
       setLoading(true);
 
-      // ✅ convert từng ảnh sang webp
       const convertedImages = [];
       for (const asset of result.assets) {
-        const webpUri = await convertToWebP(asset.uri);
-        convertedImages.push(webpUri);
+        try {
+          const webpUri = await convertToWebP(asset.uri);
+          if (webpUri) convertedImages.push(webpUri);
+        } catch (err) {
+          console.log("❌ Convert single image failed:", err);
+        }
       }
 
-      setImages((prev) => [...prev, ...convertedImages]);
+      if (convertedImages.length > 0) {
+        setImages((prev) => [...prev, ...convertedImages]);
+      }
     } catch (err) {
-      console.log("❌ Convert image error:", err);
-      Alert.alert("Lỗi", "Không thể xử lý ảnh");
+      console.log("❌ Pick images error:", err);
+      Alert.alert("Lỗi", "Không thể chọn ảnh");
     } finally {
       setLoading(false);
     }
   };
 
-  // ===== HANDLE SUBMIT =====
+  // ===== HANDLE SUBMIT REVIEW =====
   const handleSubmit = async () => {
     const bookingIdNumber = Number(bookingId);
     const ratingNumber = Number(rating);
@@ -83,21 +88,17 @@ export function ReviewScreen() {
         BookingId: bookingIdNumber,
         Rating: ratingNumber,
         Comment: comment.trim(),
-        Images: images, // ✅ ảnh đã là webp, size nhỏ
+        Images: Array.isArray(images) ? images : [], // ✅ Luôn là mảng
       });
 
       Alert.alert("Thành công", "Cảm ơn bạn đã đánh giá!", [
         { text: "OK", onPress: () => navigation.goBack() },
       ]);
     } catch (error) {
-      console.log(
-        "❌ Submit review error:",
-        error.response?.data || error.message
-      );
-
+      console.log("❌ Submit review error:", error?.response?.data || error);
       Alert.alert(
         "Lỗi",
-        error.response?.data?.errors?.Rating?.[0] ||
+        error?.response?.data?.errors?.Rating?.[0] ||
           "Không thể gửi đánh giá"
       );
     } finally {
@@ -107,7 +108,7 @@ export function ReviewScreen() {
 
   return (
     <View style={styles.container}>
-      {/* ===== HEADER ===== */}
+      {/* HEADER */}
       <View style={styles.header}>
         <View style={styles.headerTop}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -119,13 +120,13 @@ export function ReviewScreen() {
       </View>
 
       <ScrollView contentContainerStyle={{ paddingBottom: 30 }}>
-        {/* ===== INFO ===== */}
+        {/* INFO */}
         <View style={styles.infoBox}>
           <Text style={styles.infoText}>Sân: {fieldName}</Text>
           <Text style={styles.infoText}>Booking ID: {bookingId}</Text>
         </View>
 
-        {/* ===== RATING ===== */}
+        {/* RATING */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Đánh giá</Text>
           <View style={styles.starRow}>
@@ -139,7 +140,7 @@ export function ReviewScreen() {
           </View>
         </View>
 
-        {/* ===== COMMENT ===== */}
+        {/* COMMENT */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Nhận xét</Text>
           <TextInput
@@ -151,7 +152,7 @@ export function ReviewScreen() {
           />
         </View>
 
-        {/* ===== IMAGES ===== */}
+        {/* IMAGES */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Hình ảnh</Text>
           <View style={styles.imageRow}>
@@ -160,12 +161,16 @@ export function ReviewScreen() {
             ))}
 
             <TouchableOpacity style={styles.addImage} onPress={pickImages}>
-              <Text style={styles.addImageText}>＋</Text>
+              {loading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={styles.addImageText}>＋</Text>
+              )}
             </TouchableOpacity>
           </View>
         </View>
 
-        {/* ===== SUBMIT ===== */}
+        {/* SUBMIT BUTTON */}
         <TouchableOpacity
           style={styles.submitButton}
           onPress={handleSubmit}

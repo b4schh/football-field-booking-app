@@ -1,30 +1,44 @@
 import { create } from "zustand";
+import { getMyFavorites } from "../services/APIs/getFavouriteComplex";
+import { toggleFavorite } from "../services/APIs/postFavouriteComplex";
 
 export const useFavoriteStore = create((set, get) => ({
-  favorites: [], // danh sách sân yêu thích (complex hoặc field)
+  favorites: [],       // array of complex objects
+  loading: false,
+  error: null,
 
-  // ===== ADD =====
-  addFavorite: (item) => {
-    const exists = get().favorites.some((f) => f.id === item.id);
-    if (exists) return;
-
-    set((state) => ({
-      favorites: [...state.favorites, item],
-    }));
-  },
-
-  // ===== REMOVE =====
-  removeFavorite: (id) => {
-    set((state) => ({
-      favorites: state.favorites.filter((f) => f.id !== id),
-    }));
-  },
-
-  // ===== CHECK =====
+  // ===== Kiểm tra sân có phải favorite không =====
   isFavorite: (id) => {
-    return get().favorites.some((f) => f.id === id);
+    return get().favorites.some((fav) => fav.id === id);
   },
 
-  // ===== CLEAR (optional) =====
-  clearFavorites: () => set({ favorites: [] }),
+  // ===== Fetch danh sách sân yêu thích =====
+  fetchFavorites: async () => {
+    set({ loading: true, error: null });
+    try {
+      const data = await getMyFavorites(); // gọi API GET
+      set({ favorites: data, loading: false });
+    } catch (err) {
+      set({ error: err.message || "Lỗi khi lấy danh sách", loading: false });
+    }
+  },
+
+  // ===== Toggle favorite =====
+  toggleFavorite: async (field) => {
+    try {
+      await toggleFavorite(field.id); // gọi API POST toggle
+
+      const isFav = get().isFavorite(field.id);
+
+      // Cập nhật local store
+      set((state) => ({
+        favorites: isFav
+          ? state.favorites.filter((fav) => fav.id !== field.id) // remove
+          : [...state.favorites, field],                           // add
+      }));
+    } catch (error) {
+      console.error("Failed to toggle favorite:", error);
+      throw error;
+    }
+  },
 }));

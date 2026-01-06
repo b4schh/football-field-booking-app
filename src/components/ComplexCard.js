@@ -1,23 +1,28 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import styles from "../styles/ComplexCard.styles";
 import { useFavoriteStore } from "../stores/useFavouriteStore";
+import { useRatingStore } from "../stores/useRatingStore";
 
 export default function ComplexCard({ field, onPress }) {
   const navigation = useNavigation();
-
-  const { addFavorite, removeFavorite, isFavorite } = useFavoriteStore();
+  const { isFavorite, toggleFavorite } = useFavoriteStore();
+  const { fetchRating, getRating } = useRatingStore();
 
   const favorite = isFavorite(field.id);
+  const averageRating = getRating(field.id);
 
-  const handleToggleFavorite = (e) => {
-    e.stopPropagation(); // ❌ không trigger onPress của card
+  useEffect(() => {
+    fetchRating(field.id);
+  }, [field.id]);
 
-    if (favorite) {
-      removeFavorite(field.id);
-    } else {
-      addFavorite(field);
+  const handleToggleFavorite = async (e) => {
+    e.stopPropagation();
+    try {
+      await toggleFavorite(field);
+    } catch (err) {
+      console.log("Lỗi toggle favorite:", err);
     }
   };
 
@@ -27,7 +32,6 @@ export default function ComplexCard({ field, onPress }) {
       style={styles.cardContainer}
       onPress={onPress}
     >
-      {/* ===== ẢNH SÂN ===== */}
       <View style={styles.fieldImageContainer}>
         <Image source={{ uri: field.imageUrl }} style={styles.fieldImage} />
 
@@ -38,13 +42,11 @@ export default function ComplexCard({ field, onPress }) {
               source={require("../assets/images/star.png")}
               style={{ width: 12, height: 12, marginRight: 4 }}
             />
-            <Text style={styles.ratingText}>
-              {field.rating ?? "0.0"}
-            </Text>
+            <Text style={styles.ratingText}>{averageRating}</Text>
           </View>
         </View>
 
-        {/* ❤️ NÚT YÊU THÍCH */}
+        {/* ❤️ Favorite */}
         <TouchableOpacity
           style={styles.topRightButton}
           onPress={handleToggleFavorite}
@@ -60,20 +62,13 @@ export default function ComplexCard({ field, onPress }) {
         </TouchableOpacity>
       </View>
 
-      {/* ===== THÔNG TIN ===== */}
-      <View
-        style={[
-          styles.infoContainer,
-          { flexDirection: "row", alignItems: "center" },
-        ]}
-      >
-        {/* Avatar */}
+      {/* Info */}
+      <View style={[styles.infoContainer, { flexDirection: "row", alignItems: "center" }]}>
         <Image
-  source={require("../assets/images/icon.jpg")}
-  style={styles.avatar}
-/>
+          source={require("../assets/images/icon.jpg")}
+          style={styles.avatar}
+        />
 
-        {/* Text */}
         <View style={{ flex: 1, marginLeft: 10 }}>
           <Text style={styles.fieldName}>{field.name}</Text>
           <Text style={styles.address}>{field.address}</Text>
@@ -82,7 +77,6 @@ export default function ComplexCard({ field, onPress }) {
           </Text>
         </View>
 
-        {/* Button Đặt sân */}
         <TouchableOpacity
           style={styles.bookButton}
           onPress={(e) => {

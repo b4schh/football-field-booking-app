@@ -2,7 +2,7 @@ import axios from "axios";
 import useLoginStore from "../stores/useLoginStore";
 
 const axiosClientToken = axios.create({
-  baseURL: "http://192.168.0.106/api",
+  baseURL: "http://192.168.1.4/api",
   headers: { "Content-Type": "application/json" },
   timeout: 10000,
 });

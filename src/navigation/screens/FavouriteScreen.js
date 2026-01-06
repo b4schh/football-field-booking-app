@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, ScrollView } from "react-native";
 import { useFavoriteStore } from "../../stores/useFavouriteStore";
+import { useNavigation } from "@react-navigation/native";
 import styles from "../../styles/FavouriteScreen.styles";
 
 // nếu bạn đang dùng ComplexCard
@@ -8,6 +9,7 @@ import ComplexCard from "../../components/ComplexCard";
 
 export function FavoriteScreen() {
   const { favorites } = useFavoriteStore();
+  const navigation = useNavigation();
 
   return (
     <View style={styles.container}>
@@ -23,7 +25,11 @@ export function FavoriteScreen() {
           </Text>
         ) : (
           favorites.map((item) => (
-            <ComplexCard key={item.id} complex={item} />
+            <ComplexCard
+              key={item.id ? item.id.toString() : Math.random().toString()}
+              field={item}
+              onPress={() => navigation.navigate("ComplexScreen", { field: item })}
+            />
           ))
         )}
       </ScrollView>

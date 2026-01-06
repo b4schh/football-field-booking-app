@@ -42,9 +42,8 @@ export function ComplexScreen() {
     setActiveTab("Thông tin");
   }, [field.id]);
 
-  // ===== MAIN IMAGE =====
-  const mainImage =
-    images.find((img) => img.isMain)?.imageUrl || field.imageUrl;
+  // ===== TOP IMAGE =====
+  const mainImage = field.imageUrl; // Luôn giữ ảnh gốc, không đổi
 
   // ===== TAB CONTENT =====
   const renderTabContent = () => {
@@ -62,38 +61,44 @@ export function ComplexScreen() {
         );
 
       case "Hình ảnh":
-        return (
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ padding: 10 }}
-          >
-            {imageLoading ? (
-              <ActivityIndicator size="small" />
-            ) : images.length > 0 ? (
-              images.map((img) => (
-                <Image
-                  key={img.id}
-                  source={{ uri: img.imageUrl }}
-                  style={{
-                    width: 200,
-                    height: 150,
-                    marginRight: 10,
-                    borderRadius: 10,
-                    borderWidth: img.isMain ? 2 : 0,
-                    borderColor: img.isMain
-                      ? "#2ecc71"
-                      : "transparent",
-                  }}
-                  resizeMode="cover"
-                />
-              ))
-            ) : (
-              <Text>Chưa có hình ảnh</Text>
-            )}
-          </ScrollView>
-        );
+  const baseURL = "http://192.168.1.4:9200/football-field-dev/complexes/";
+  
+  return (
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={{ padding: 10 }}
+    >
+      {imageLoading ? (
+        <ActivityIndicator size="small" />
+      ) : images.length > 0 ? (
+        images.map((img) => {
+          // chỉ lấy filename cuối cùng
+          const filename = img.imageUrl.split("/").pop();
+          // nối thành URL đầy đủ với IP mới
+          const fullUrl = baseURL + filename;
 
+          return (
+            <Image
+              key={img.id}
+              source={{ uri: fullUrl }}
+              style={{
+                width: 200,
+                height: 150,
+                marginRight: 10,
+                borderRadius: 10,
+                borderWidth: img.isMain ? 2 : 0,
+                borderColor: img.isMain ? "#2ecc71" : "transparent",
+              }}
+              resizeMode="cover"
+            />
+          );
+        })
+      ) : (
+        <Text>Chưa có hình ảnh</Text>
+      )}
+    </ScrollView>
+  );
       case "Đánh giá":
         return (
           <View style={{ padding: 10 }}>
@@ -115,12 +120,8 @@ export function ComplexScreen() {
                     />
 
                     <View style={{ flex: 1 }}>
-                      <Text style={styles.reviewName}>
-                        {review.user?.name}
-                      </Text>
-                      <Text style={styles.reviewRole}>
-                        {review.user?.role}
-                      </Text>
+                      <Text style={styles.reviewName}>{review.user?.name}</Text>
+                      <Text style={styles.reviewRole}>{review.user?.role}</Text>
                     </View>
 
                     <Text style={styles.reviewRating}>
@@ -131,9 +132,7 @@ export function ComplexScreen() {
 
                   {/* COMMENT */}
                   {review.comment ? (
-                    <Text style={styles.reviewComment}>
-                      {review.comment}
-                    </Text>
+                    <Text style={styles.reviewComment}>{review.comment}</Text>
                   ) : null}
 
                   {/* IMAGES */}
@@ -155,9 +154,7 @@ export function ComplexScreen() {
 
                   {/* FOOTER */}
                   <Text style={styles.reviewDate}>
-                    {new Date(review.createdAt).toLocaleDateString(
-                      "vi-VN"
-                    )}
+                    {new Date(review.createdAt).toLocaleDateString("vi-VN")}
                   </Text>
                 </View>
               ))
@@ -216,26 +213,24 @@ export function ComplexScreen() {
       </View>
 
       {/* ===== INFO BOX ===== */}
-{/* ===== INFO BOX ===== */}
-<View style={styles.infoBox}>
-  <Text style={styles.complexName}>{field.name}</Text>
+      <View style={styles.infoBox}>
+        <Text style={styles.complexName}>{field.name}</Text>
+        <Text style={styles.infoText}>{field.address}</Text>
 
-  <Text style={styles.infoText}>{field.address}</Text>
+        <View style={styles.divider} />
 
-  <View style={styles.divider} />
+        <View style={styles.infoInline}>
+          <Text style={styles.infoLabel}>Giờ mở cửa:</Text>
+          <Text style={styles.infoValue}>
+            {field.openTime} - {field.closeTime}
+          </Text>
+        </View>
 
-  <View style={styles.infoInline}>
-    <Text style={styles.infoLabel}>Giờ mở cửa:</Text>
-    <Text style={styles.infoValue}>
-      {field.openTime} - {field.closeTime}
-    </Text>
-  </View>
-
-  <View style={styles.infoInline}>
-    <Text style={styles.infoLabel}>Liên hệ:</Text>
-    <Text style={styles.infoValue}>{field.phone}</Text>
-  </View>
-</View>
+        <View style={styles.infoInline}>
+          <Text style={styles.infoLabel}>Liên hệ:</Text>
+          <Text style={styles.infoValue}>{field.phone}</Text>
+        </View>
+      </View>
 
       {/* ===== TABS ===== */}
       <View style={styles.tabContainer}>
@@ -256,10 +251,7 @@ export function ComplexScreen() {
               }}
             >
               <Text
-                style={[
-                  styles.tabItem,
-                  activeTab === tab && styles.activeTab,
-                ]}
+                style={[styles.tabItem, activeTab === tab && styles.activeTab]}
               >
                 {tab}
               </Text>
@@ -267,9 +259,7 @@ export function ComplexScreen() {
           ))}
         </View>
 
-        <ScrollView style={styles.tabContent}>
-          {renderTabContent()}
-        </ScrollView>
+        <ScrollView style={styles.tabContent}>{renderTabContent()}</ScrollView>
       </View>
     </View>
   );

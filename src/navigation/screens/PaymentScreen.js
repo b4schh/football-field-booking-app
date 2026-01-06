@@ -15,7 +15,7 @@ export function PaymentScreen() {
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
 
-  const { complexName, selectedDate, selectedSlot } = route.params;
+  const { complexId ,complexName, selectedDate, selectedSlot } = route.params;
 
   // ===== Parse ISO string thành Date object =====
   const bookingDateObj = new Date(selectedDate);
@@ -62,6 +62,7 @@ export function PaymentScreen() {
       // ===== Điều hướng sang PaymentScreen2 =====
       navigation.navigate("PaymentScreen2", {
         bookingId: booking.id,
+        complexId : complexId,
         complexName: booking.complexName,
         fieldName: booking.fieldName,
         bookingDate: booking.bookingDate,

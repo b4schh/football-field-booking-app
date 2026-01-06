@@ -76,6 +76,9 @@ export function AccountScreen() {
     try {
       setLoadingAvatar(true);
       const avatarUrl = await uploadAvatar(uri);
+
+      if (!avatarUrl) throw new Error("Server không trả về URL avatar");
+
       Alert.alert("Thành công", "Cập nhật avatar thành công!");
       setAvatarUri(avatarUrl);          // cập nhật hiển thị avatar
       setUser({ ...user, avatarUrl });  // cập nhật store
@@ -104,7 +107,6 @@ export function AccountScreen() {
             </View>
           )}
         </TouchableOpacity>
-
         <Text style={styles.username}>{fullName || "Người dùng"}</Text>
       </View>
 
@@ -123,11 +125,10 @@ export function AccountScreen() {
       <TouchableOpacity
         style={styles.buttonRow}
         onPress={() => navigation.navigate("NotificationScreen")}
-        >
+      >
         <Image source={require("../../assets/images/bell.png")} style={styles.icon} />
         <Text style={styles.buttonText}>Thông báo</Text>
-</TouchableOpacity>
-
+      </TouchableOpacity>
 
       <TouchableOpacity
         style={styles.buttonRow}
