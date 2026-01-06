@@ -1,8 +1,17 @@
-import React from 'react';
-import { View, Text, Image, TouchableOpacity } from 'react-native';
-import styles from '../styles/Header.styles';
+import React, { useEffect } from "react";
+import { View, Text, Image, TouchableOpacity } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import styles from "../styles/Header.styles";
+import { useUserStore } from "../stores/useUserStore";
 
-export default function Header({ userName }) {
+export default function Header() {
+  const navigation = useNavigation();
+  const { user, fetchMe } = useUserStore();
+
+  useEffect(() => {
+    fetchMe();
+  }, []);
+
   const days = [
     "Chủ Nhật",
     "Thứ Hai",
@@ -10,40 +19,44 @@ export default function Header({ userName }) {
     "Thứ Tư",
     "Thứ Năm",
     "Thứ Sáu",
-    "Thứ Bảy"
+    "Thứ Bảy",
   ];
 
   const today = new Date();
-  const fullDate = `${days[today.getDay()]}, ${today.toLocaleDateString()}`;
+  const fullDate = `${days[today.getDay()]}, ${today.toLocaleDateString("vi-VN")}`;
 
   return (
     <View style={styles.container}>
-
-      {/* CỘT 1: AVATAR */}
+      {/* LOGO APP */}
       <View style={styles.column1}>
         <Image
-          source={require('../assets/images/football-logo.png')}
-          style={styles.avatar}
+          source={require("../assets/images/football-logo.png")} // 🔥 LOGO APP
+          style={styles.logo}
+          resizeMode="contain"
         />
       </View>
 
-      {/* CỘT 2: THỨ + NGÀY + TÊN USER */}
+      {/* DATE + GREETING */}
       <View style={styles.column2}>
         <Text style={styles.dateText}>{fullDate}</Text>
 
         <Text style={styles.userNameText}>
-          {userName ? userName : "Xin chào, User"}
+          {user
+            ? `Xin chào, ${user.firstName} ${user.lastName}`
+            : "Xin chào"}
         </Text>
       </View>
 
-      {/* CỘT 3: ICON THÔNG BÁO (ẢNH) */}
-      <TouchableOpacity style={styles.notifyButton}>
-  <Image
-    source={require('../assets/images/notification.png')}
-    style={styles.notifyIcon}
-  />
-</TouchableOpacity>
-
+      {/* NOTIFICATION */}
+      <TouchableOpacity
+        style={styles.notifyButton}
+        onPress={() => navigation.navigate("NotificationScreen")}
+      >
+        <Image
+          source={require("../assets/images/notification.png")}
+          style={styles.notifyIcon}
+        />
+      </TouchableOpacity>
     </View>
   );
 }

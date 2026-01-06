@@ -10,6 +10,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Colors } from './constants/Colors';
 import { Navigation } from './navigation';
 
+
 SplashScreen.preventAutoHideAsync();
 
 export function App() {
@@ -45,6 +46,7 @@ export function App() {
           SplashScreen.hideAsync();
         }}
       />
+      
     </GestureHandlerRootView>
   );
 }

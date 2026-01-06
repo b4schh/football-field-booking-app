@@ -80,23 +80,23 @@ export default StyleSheet.create({
     paddingHorizontal: 8,
     backgroundColor: '#ffffffff',
   },
-  dropdownFull: {
-    width: '100%',
-    height: 36,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 4,
-    justifyContent: 'center',
-    paddingHorizontal: 8,
-    backgroundColor: '#ffffffff',
-    marginBottom: 12,
-  },
+  
   dropdownText: {
     fontSize: 14,
     color: '#ccc',
   },
   input: {
     width: 150, // ~ nửa box
+    height: 36,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 4,
+    paddingHorizontal: 8,
+    backgroundColor: '#fff',
+  },
+
+  inputFull: {
+    width: 325, // ~ nửa box
     height: 36,
     borderWidth: 1,
     borderColor: '#ccc',
@@ -125,4 +125,11 @@ export default StyleSheet.create({
     fontWeight: 'bold',
     color: '#fff',
   },
+
+  locationRow: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  marginBottom: 12,
+},
+
 });

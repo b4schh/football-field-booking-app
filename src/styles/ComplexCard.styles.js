@@ -1,135 +1,133 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
   cardContainer: {
-    width: 330,
-    height: 185,
-    borderRadius: 12,
-    backgroundColor: '#fff',
-    overflow: 'hidden',
-    marginVertical: 10,
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    alignSelf: 'center',
+    width: 340,
+    height: 260,
+    borderRadius: 16,
+    backgroundColor: "#fff",
+    overflow: "hidden",
+    marginVertical: 12,
+    alignSelf: "center",
+
+    // Shadow
+    elevation: 6,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
   },
 
-  // Container ảnh sân
+  /* ================= IMAGE ================= */
   fieldImageContainer: {
-    width: '100%',
-    height: '50%',
-    position: 'relative', // overlay
+    width: "100%",
+    height: "52%",
+    position: "relative",
   },
 
   fieldImage: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
   },
 
-  // Overlay ô đánh giá
+  /* ================= RATING ================= */
   ratingBox: {
-    position: 'absolute',
-    top: 8,
-    left: 8,
-    width: 60,
-    height: 30,
-    backgroundColor: '#ffffffff',
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
+    position: "absolute",
+    top: 10,
+    left: 10,
+    minWidth: 60,
+    height: 28,
+    backgroundColor: "#ffffffee",
+    borderRadius: 14,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 8,
   },
 
   ratingText: {
-    color: '#000',
+    color: "#f39c12",
     fontSize: 12,
+    fontWeight: "700",
   },
 
-  // Overlay hình tròn bên phải
+  /* ================= HEART ================= */
   topRightButton: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    alignItems: 'center',
+    position: "absolute",
+    top: 10,
+    right: 10,
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: "#ffffffee",
+    justifyContent: "center",
+    alignItems: "center",
   },
 
-  // Thông tin sân 50% dưới
+  /* ================= INFO ================= */
   infoContainer: {
-    flexDirection: 'row',
-    padding: 10,
-    height: '50%',
-    backgroundColor: '#fff',
-    borderBottomLeftRadius: 12,
-    borderBottomRightRadius: 12,
-    alignItems: 'center',
-    
+    flexDirection: "row",
+    padding: 14,
+    height: "48%",
+    backgroundColor: "#fff",
+    alignItems: "center",
   },
 
+  /* Avatar */
   column1: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: -10,
+    width: 60,
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: "#ecf0f1",
   },
 
+  /* Text */
   column2: {
-    flex: 4,
-    justifyContent: 'center',
+    flex: 1,
+    justifyContent: "center",
     paddingHorizontal: 10,
-    marginLeft: -10,
   },
 
   fieldName: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "700",
+    color: "#2c3e50",
     marginBottom: 4,
-    color: '#000',
   },
 
   address: {
-    fontSize: 14,
-    color: '#555',
+    fontSize: 13,
+    color: "#7f8c8d",
     marginBottom: 2,
   },
 
   openTime: {
     fontSize: 12,
-    color: '#777',
+    color: "#95a5a6",
   },
 
+  /* Button */
   column3: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: "center",
   },
 
   bookButton: {
-    backgroundColor: '#239969',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 6,
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#27ae60",
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 10,
   },
 
   bookButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: "#fff",
+    fontWeight: "700",
     fontSize: 14,
-    textAlign: 'center',
   },
 });
 

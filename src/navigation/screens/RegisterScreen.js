@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert } from "react-native";
 import styles from "../../styles/RegisterScreen.styles";
 import { useNavigation } from "@react-navigation/native";
+import useRegisterStore from "../../stores/useRegisterStore";  // <== ADD THIS
 
 export function RegisterScreen() {
   const [phone, setPhone] = useState("");
@@ -10,19 +11,49 @@ export function RegisterScreen() {
   const [firstName, setFirstName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
   const navigation = useNavigation();
+
+  // lấy hàm register + loading từ Zustand Store
+  const register = useRegisterStore((s) => s.register);
+  const loading = useRegisterStore((s) => s.loading);
+  const error = useRegisterStore((s) => s.error);
+
+  const handleRegister = async () => {
+    const data = {
+      phone,
+      email,
+      lastName: middleName,
+      firstName: firstName,
+      password,
+      confirmPassword,
+    };
+
+    try {
+      const result = await register(data);
+
+      Alert.alert("Thành công", "Đăng ký thành công!", [
+        { text: "OK", onPress: () => navigation.navigate("LoginScreen") }
+      ]);
+
+      console.log("Kết quả API:", result);
+
+    } catch (err) {
+      Alert.alert("Lỗi đăng ký", error || "Có lỗi xảy ra");
+      console.log("Lỗi:", err);
+    }
+  };
 
   return (
     <View style={styles.container}>
-      
-      {/* Dòng chữ "Đăng ký" ở phần màu xanh */}
+
       <View style={styles.topTextContainer}>
         <Text style={styles.registerTitle}>Đăng ký</Text>
       </View>
 
-      {/* Box trắng */}
       <View style={styles.whiteBox}>
         <ScrollView showsVerticalScrollIndicator={false}>
+
           <Text style={styles.label}>Số điện thoại của bạn? (*)</Text>
           <TextInput
             style={styles.input}
@@ -81,8 +112,10 @@ export function RegisterScreen() {
             onChangeText={setConfirmPassword}
           />
 
-          <TouchableOpacity style={styles.registerButton}>
-            <Text style={styles.registerText}>Đăng ký</Text>
+          <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
+            <Text style={styles.registerText}>
+              {loading ? "Đang xử lý..." : "Đăng ký"}
+            </Text>
           </TouchableOpacity>
 
           <TouchableOpacity

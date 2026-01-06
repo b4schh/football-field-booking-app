@@ -1,104 +1,87 @@
-import React, { useState, useRef, useEffect } from "react";
-import { View, ScrollView, StyleSheet } from "react-native";
+import React, { useEffect } from "react";
+import { View, ScrollView, StyleSheet, ActivityIndicator, Text } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+
 import Header from "../../components/Header";
 import SearchBar from "../../components/SearchBar";
 import ComplexCard from "../../components/ComplexCard";
-import ComplexSheet from "../../components/ComplexSheet";
+
+// Zustand store
+import { useComplexStore } from "../../stores/useComplexStore";
 
 export function Home() {
-  const fields = [
-    {
-      id: 1,
-      name: "Sân BKX",
-      address: "44 Tạ Quang Bửu, Hà Nội",
-      openTime: "06:00 - 22:00",
-      phone: "0987654321",
-      imageUrl:
-        "https://cdn2.tuoitre.vn/thumb_w/480/471584752817336320/2025/7/29/omorphia-visual-low-175377204704373291665.jpg",
-      avatarUrl:
-        "https://images.unsplash.com/photo-1526403223453-1b6f99db94d4",
-      rating: "4.5",
-    },
-    {
-      id: 2,
-      name: "Sân Thăng Long",
-      address: "123 Lê Duẩn, Hà Nội",
-      openTime: "07:00 - 23:00",
-      phone: "0912345678",
-      imageUrl:
-        "https://kenh14cdn.com/203336854389633024/2025/8/16/photo-2-1755315995599876621479-1755323495159-17553234954271073956779.jpg",
-      avatarUrl:
-        "https://images.unsplash.com/photo-1526403223453-1b6f99db94d4",
-      rating: "4.8",
-    },
-    {
-      id: 3,
-      name: "Sân Mỹ Đình",
-      address: "Mỹ Đình, Hà Nội",
-      openTime: "05:30 - 21:00",
-      phone: "0932123456",
-      imageUrl:
-        "https://cdn.tienphong.vn/images/574512d9cf7ef1b3588eee26f0358da2f75e8ad9927e5e8bf59254fcdafdebe371a50c09466d502cd589ad3c5c7fd5a8/rump-25.jpg",
-      avatarUrl:
-        "https://images.unsplash.com/photo-1526403223453-1b6f99db94d4",
-      rating: "4.2",
-    },
-  ];
+  const { complexes, searchResults, loading, fetchComplexes } = useComplexStore();
+  const navigation = useNavigation();
 
-  // 👉 state + ref cho bottom sheet
-  const sheetRef = useRef(null);
-  const [selectedField, setSelectedField] = useState(null);
-
-  // 👉 mở sheet khi selectedField thay đổi
+  // Load mặc định danh sách khi vào Home nếu chưa có dữ liệu
   useEffect(() => {
-    if (selectedField) {
-      sheetRef.current?.openPreview(); // mở 30%
+    if (complexes.length === 0 && searchResults.length === 0) {
+      fetchComplexes(1, 10);
     }
-  }, [selectedField]);
+  }, []);
+
+  // Dữ liệu hiển thị: ưu tiên searchResults nếu có
+  const dataToShow = searchResults.length > 0 ? searchResults : complexes;
+
+  // Debug log
+  useEffect(() => {
+    if (searchResults.length > 0) {
+      console.log("🔍 Displaying search results:", searchResults.length);
+      searchResults.forEach((c, i) =>
+        console.log(`${i + 1}. ${c.name} - ${c.address}`)
+      );
+    }
+  }, [searchResults]);
 
   return (
     <View style={styles.container}>
+      {/* Header */}
       <Header />
 
+      {/* Search bar */}
       <View style={styles.searchContainer}>
         <SearchBar />
       </View>
 
       <View style={styles.searchPlaceholder} />
 
-      {/* Danh sách sân */}
-      <ScrollView contentContainerStyle={styles.listContainer}>
-        {fields.map((field) => (
-          <View key={field.id} style={styles.ComplexCardWrapper}>
-            <ComplexCard
-              field={field}
-              onPress={() => setSelectedField(field)} // chỉ set state
-            />
-          </View>
-        ))}
-      </ScrollView>
+      {/* Loading indicator */}
+      {loading && (
+        <ActivityIndicator
+          size="large"
+          color="#00aa55"
+          style={{ marginTop: 40 }}
+        />
+      )}
 
-      {/* Bottom Sheet */}
-      <ComplexSheet ref={sheetRef} field={selectedField} />
+      {/* Không có kết quả */}
+      {!loading && dataToShow.length === 0 && (
+        <Text style={styles.noResultText}>Không tìm thấy kết quả</Text>
+      )}
+
+      {/* Danh sách complexes */}
+      <ScrollView contentContainerStyle={styles.listContainer}>
+        {!loading &&
+          dataToShow.map((complex) => (
+            <View key={complex.id} style={styles.complexCardWrapper}>
+              <ComplexCard
+                field={complex}
+                onPress={() =>
+                  navigation.navigate("ComplexScreen", { field: complex })
+                }
+              />
+            </View>
+          ))}
+      </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f2f2f2",
-  },
-  searchContainer: {
-    marginHorizontal: 16,
-  },
-  searchPlaceholder: {
-    height: 25,
-  },
-  listContainer: {
-    paddingBottom: 20,
-  },
-  ComplexCardWrapper: {
-    marginTop: 16,
-  },
+  container: { flex: 1, backgroundColor: "#f2f2f2" },
+  searchContainer: { marginHorizontal: 16 },
+  searchPlaceholder: { height: 25 },
+  listContainer: { paddingBottom: 20 },
+  complexCardWrapper: { marginTop: 16 },
+  noResultText: { textAlign: "center", marginTop: 40, color: "#999" },
 });

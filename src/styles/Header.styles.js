@@ -7,6 +7,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#239969',
     alignItems: 'center',
     paddingHorizontal: 0, // loại lề mặc định để dịch toàn bộ sang trái
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
   },
 
   // Cột 1: Avatar
@@ -18,10 +20,12 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
 
-  avatar: {
-    width: 57,
-    height: 57,
-  },
+logo: {
+  width: 44,
+  height: 44,
+  borderRadius: 8, // bo nhẹ cho hiện đại
+},
+
 
   // Cột 2: Thứ/ngày + tên user
   column2: {
@@ -39,7 +43,7 @@ const styles = StyleSheet.create({
 
   userNameText: {
     color: '#fff',
-    fontSize: 18,
+    fontSize: 16,
   },
 
   // Cột 3: Nút thông báo
